@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成绩查询</title>
+</head>
+<body>
+    <h1>成绩查询</h1>
+    <form id="scoreForm">
+        <label for="id_card">请输入身份证号:</label><br>
+        <input type="text" id="id_card" name="id_card"><br><br>
+        <input type="submit" value="查询">
+    </form>
+    <p id="result"></p>
+
+    <script>
+        document.getElementById('scoreForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const id_card = document.getElementById('id_card').value;
+
+            fetch('/get-score', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id_card: id_card })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.name && data.score) {
+                    document.getElementById('result').innerText = `姓名: ${data.name}, 成绩: ${data.score}`;
+                } else {
+                    document.getElementById('result').innerText = '未找到对应的成绩';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
